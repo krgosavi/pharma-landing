@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 const stats = [
   {
-    number: 15,
+    number: 8,
     suffix: "+",
     label: "Years of Expertise",
   },

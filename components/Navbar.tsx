@@ -34,7 +34,7 @@ export default function Navbar() {
         >
           <div className="relative h-10 w-10 overflow-hidden rounded-xl">
               <img
-                src="/images/solunist-logo-transparent-1.png"
+                src="/images/solunist-logo-transparent-3.png"
                 alt="Solunist Research & Development"
                 className="h-11 w-auto object-contain"
               />
@@ -42,13 +42,14 @@ export default function Navbar() {
           
           <div>
           
-            <span className="text-lg font-bold tracking-tight text-cyan-200">
+            <span className="text-lg font-bold tracking-tight text-white">
               Solunist Research
             </span>
-              
+              {/*
             <span className="ml-2 hidden text-xs text-slate-400 sm:inline">
               Research & Development
             </span>
+            */}
           </div>
         </motion.a>
 
@@ -76,7 +77,7 @@ export default function Navbar() {
           href="#contact"
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.97 }}
-          className="hidden items-center gap-2 rounded-full bg-cyan-200 px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 md:flex"
+          className="hidden items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 md:flex"
         >
           Contact Us
           <ArrowUpRight size={16} />

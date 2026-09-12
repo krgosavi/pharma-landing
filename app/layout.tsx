@@ -3,8 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "PharmaLab | Pharmaceutical Research & Innovation",
-    template: "%s | PharmaLab",
+    default: "Solunist Research",
+    template: "%s | Solunist",
   },
 
   description:
