@@ -13,6 +13,7 @@ import {
 interface FormData {
   name: string;
   email: string;
+  phone: string;
   company: string;
   message: string;
 }
@@ -20,6 +21,7 @@ interface FormData {
 interface FormErrors {
   name?: string;
   email?: string;
+  phone?: string;
   message?: string;
 }
 
@@ -27,6 +29,7 @@ export default function Contact() {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
+    phone: "",
     company: "",
     message: "",
   });
@@ -49,6 +52,12 @@ export default function Contact() {
       newErrors.email = "Please enter a valid email address.";
     }
 
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Please enter your phone number.";
+    } else if (!/^[0-9+\-\s()]{7,20}$/.test(formData.phone)) {
+      newErrors.phone = "Please enter a valid phone number.";
+    }
+
     if (!formData.message.trim()) {
       newErrors.message = "Please tell us about your project.";
     } else if (formData.message.trim().length < 10) {
@@ -61,35 +70,59 @@ export default function Contact() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const [sending, setSending] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement>
+    ) => {
     event.preventDefault();
 
     if (!validateForm()) {
-      return;
+    return;
     }
 
-    /*
-      Stage 4 currently performs client-side validation.
+      setSending(true);
+      setSubmitError("");
 
-      Later we can connect this form to:
-      - Next.js API route
-      - Email service
-      - Formspree
-      - Resend
-      - your backend
-    */
+    try {
+    const response = await fetch("/api/contact", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        result.error || "Failed to send message."
+      );
+    }
 
     setSubmitted(true);
 
     setFormData({
       name: "",
       email: "",
+      phone: "",
       company: "",
       message: "",
     });
 
     setErrors({});
-  };
+  } catch (error) {
+    console.error(error);
+
+    setSubmitError(
+      "We couldn't send your message. Please try again or contact us directly by email."
+    );
+  } finally {
+    setSending(false);
+  }
+};
 
   const handleChange = (
     field: keyof FormData,
@@ -179,7 +212,7 @@ export default function Contact() {
                     Email
                   </p>
                   <p className="mt-1 text-white">
-                    info@pharmalab.com
+                    info@solunistresearch.com
                   </p>
                 </div>
               </div>
@@ -215,7 +248,7 @@ export default function Contact() {
                     Location
                   </p>
                   <p className="mt-1 text-white">
-                    Research & Innovation Center
+                    Pune, Maharashtra, India
                   </p>
                 </div>
               </div>
@@ -358,6 +391,46 @@ export default function Contact() {
                   </div>
                 </div>
 
+                {/* Phone */}
+                <div>
+                  <label
+                    className="text-sm font-medium text-white"
+                    htmlFor="phone"
+                  >
+                  Phone *
+                  </label>
+
+                  <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      autoComplete="tel"
+                      value={formData.phone}
+                      onChange={(event) =>
+                        handleChange("phone", event.target.value)
+                      }
+                      aria-invalid={!!errors.phone}
+                      aria-describedby={
+                        errors.phone ? "phone-error" : undefined
+                      }
+                      className={`mt-2 w-full rounded-xl border bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-400 ${
+                        errors.phone
+                          ? "border-red-400"
+                          : "border-white/10"
+                      }`}
+                      placeholder="+91 98765 43210"
+                  />
+
+                      {errors.phone && (
+                        <p
+                          id="phone-error"
+                          className="mt-2 text-sm text-red-400"
+                        >
+                          {errors.phone}
+                        </p>
+                      )}
+                      </div>
+
                 {/* Company */}
                 <div>
                   <label
@@ -429,14 +502,21 @@ export default function Contact() {
                 </div>
 
                 {/* Submit */}
+                {submitError && (
+                    <p className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-300">
+                      {submitError}
+                    </p>
+                )}
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ scale: sending ? 1 : 1.02 }}
+                  whileTap={{ scale: sending ? 1 : 0.98 }}
                   type="submit"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-500 px-6 py-3.5 font-semibold text-slate-950 transition hover:bg-cyan-400"
+                  disabled={sending}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-500 px-6 py-3.5 font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Send Message
-                  <Send size={17} />
+                    {sending ? "Sending..." : "Send Message"}
+
+                    {!sending && <Send size={17} />}
                 </motion.button>
 
                 <p className="text-center text-xs text-slate-500">

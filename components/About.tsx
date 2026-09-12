@@ -47,14 +47,19 @@ export default function About() {
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-600">
             About Solunist Research
           </p>
-
+          
           <h2 className="mt-4 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
             From Research & Development to
             <span className="text-cyan-500"> Global Compliance</span>
           </h2>
-
+          
           <p className="mt-6 text-lg leading-8 text-slate-600">
             Solunist Research is a science-driven consulting firm helping organizations transform innovative ideas into practical, compliant, and market-ready solutions. We bring together scientific expertise, industry knowledge, regulatory insight, and a practical approach to help our clients navigate complex challenges across healthcare and life sciences.
+            {/*From innovation and development to compliance and market readiness, we work alongside our clients to create solutions that are credible, effective, and built for real-world success.*/}
+          </p>
+
+          <p className="max-w-3xl text-lg leading-8 text-slate-600">
+            {/*Solunist Research is a science-driven consulting firm helping organizations transform innovative ideas into practical, compliant, and market-ready solutions. We bring together scientific expertise, industry knowledge, regulatory insight, and a practical approach to help our clients navigate complex challenges across healthcare and life sciences.*/}
             From innovation and development to compliance and market readiness, we work alongside our clients to create solutions that are credible, effective, and built for real-world success.
           </p>
         </motion.div>
