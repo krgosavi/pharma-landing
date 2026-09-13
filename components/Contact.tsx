@@ -25,104 +25,29 @@ interface FormErrors {
   message?: string;
 }
 
-export default function Contact() {
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    email: "",
-    phone: "",
-    company: "",
-    message: "",
-  });
-
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [submitted, setSubmitted] = useState(false);
-
-  const validateForm = () => {
-    const newErrors: FormErrors = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Please enter your name.";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Please enter your email address.";
-    } else if (
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
-    ) {
-      newErrors.email = "Please enter a valid email address.";
-    }
-
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Please enter your phone number.";
-    } else if (!/^[0-9+\-\s()]{7,20}$/.test(formData.phone)) {
-      newErrors.phone = "Please enter a valid phone number.";
-    }
-
-    if (!formData.message.trim()) {
-      newErrors.message = "Please tell us about your project.";
-    } else if (formData.message.trim().length < 10) {
-      newErrors.message =
-        "Please provide at least 10 characters.";
-    }
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const [sending, setSending] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-
-  const handleSubmit = async (
-    event: FormEvent<HTMLFormElement>
-    ) => {
-    event.preventDefault();
-
-    if (!validateForm()) {
-    return;
-    }
-
-      setSending(true);
-      setSubmitError("");
-
-    try {
-    const response = await fetch("/api/contact", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(
-        result.error || "Failed to send message."
-      );
-    }
-
-    setSubmitted(true);
-
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      company: "",
-      message: "",
-    });
-
-    setErrors({});
-  } catch (error) {
-    console.error(error);
-
-    setSubmitError(
-      "We couldn't send your message. Please try again or contact us directly by email."
-    );
-  } finally {
-    setSending(false);
-  }
+const initialFormData: FormData = {
+  name: "",
+  email: "",
+  phone: "",
+  company: "",
+  message: "",
 };
+
+export default function Contact() {
+  const [formData, setFormData] =
+    useState<FormData>(initialFormData);
+
+  const [errors, setErrors] =
+    useState<FormErrors>({});
+
+  const [sending, setSending] =
+    useState(false);
+
+  const [submitted, setSubmitted] =
+    useState(false);
+
+  const [submitError, setSubmitError] =
+    useState("");
 
   const handleChange = (
     field: keyof FormData,
@@ -133,14 +58,102 @@ export default function Contact() {
       [field]: value,
     }));
 
-    if (errors[field as keyof FormErrors]) {
-      setErrors((previous) => ({
-        ...previous,
-        [field]: undefined,
-      }));
+    setErrors((previous) => ({
+      ...previous,
+      [field]: undefined,
+    }));
+
+    setSubmitError("");
+    setSubmitted(false);
+  };
+
+  const validateForm = () => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Please enter your name.";
     }
 
+    if (!formData.email.trim()) {
+      newErrors.email =
+        "Please enter your email address.";
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+        formData.email
+      )
+    ) {
+      newErrors.email =
+        "Please enter a valid email address.";
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone =
+        "Please enter your phone number.";
+    } else if (
+      !/^[0-9+\-\s()]{7,20}$/.test(
+        formData.phone
+      )
+    ) {
+      newErrors.phone =
+        "Please enter a valid phone number.";
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message =
+        "Please tell us how we can help.";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setSending(true);
+    setSubmitError("");
     setSubmitted(false);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ||
+            "Failed to send your message."
+        );
+      }
+
+      setSubmitted(true);
+
+      setFormData(initialFormData);
+      setErrors({});
+    } catch (error) {
+      console.error(error);
+
+      setSubmitError(
+        "We couldn't send your message. Please try again or contact us directly by email."
+      );
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -148,288 +161,355 @@ export default function Contact() {
       id="contact"
       className="relative overflow-hidden bg-slate-950 py-24"
     >
-      {/* Background glow */}
-      <div className="absolute -left-40 top-20 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl" />
+      {/* Background decoration */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-0 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-cyan-500/10 blur-3xl" />
+
+        <div className="absolute bottom-0 right-0 h-[400px] w-[400px] rounded-full bg-blue-500/10 blur-3xl" />
+      </div>
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-
         {/* Heading */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.7 }}
+          initial={{
+            opacity: 0,
+            y: 30,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          viewport={{
+            once: true,
+            amount: 0.2,
+          }}
+          transition={{
+            duration: 0.7,
+          }}
           className="mx-auto max-w-3xl text-center"
         >
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-400">
-            Get in Touch
+            Contact Us
           </p>
 
-          <h2 className="mt-4 text-4xl font-bold tracking-tight text-white sm:text-5xl">
-            Let's Discuss Your
+          <h2 className="mt-4 text-3xl font-bold tracking-tight text-white sm:text-5xl">
+            Let&apos;s Discuss Your
             <span className="text-cyan-400">
               {" "}
-              Research
+              Research Goals
             </span>
           </h2>
 
-          <p className="mt-6 text-lg leading-8 text-slate-400">
-            Tell us about your project and our team will get
-            back to you.
+          <p className="mt-6 text-base leading-7 text-slate-400 sm:text-lg">
+            Tell us about your project, research
+            requirements, or development challenges.
+            Our team will get back to you.
           </p>
         </motion.div>
 
-        <div className="mt-16 grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-
+        {/* Content */}
+        <div className="mt-16 grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
           {/* Contact Information */}
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
+            initial={{
+              opacity: 0,
+              x: -30,
+            }}
+            whileInView={{
+              opacity: 1,
+              x: 0,
+            }}
+            viewport={{
+              once: true,
+              amount: 0.2,
+            }}
+            transition={{
+              duration: 0.7,
+            }}
           >
-            <h3 className="text-2xl font-bold text-white">
-              Connect with our team
-            </h3>
+            <div>
+              <h3 className="text-2xl font-semibold text-white">
+                Start a Conversation
+              </h3>
 
-            <p className="mt-4 max-w-md leading-7 text-slate-400">
-              Whether you are starting a new research project
-              or looking for scientific support, we would be
-              happy to discuss your requirements.
-            </p>
+              <p className="mt-4 max-w-md leading-7 text-slate-400">
+                Whether you need regulatory support,
+                research consulting, technical
+                documentation, or product development
+                expertise, we&apos;re ready to help.
+              </p>
+            </div>
 
-            <div className="mt-8 space-y-6">
-              <div className="flex gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10">
+            <div className="mt-8 space-y-5">
+              {/* Email */}
+              <a
+                href="mailto:info@solunistresearch.com"
+                className="group flex items-center gap-4"
+              >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5">
                   <Mail
-                    size={19}
+                    size={18}
                     className="text-cyan-400"
                   />
-                </div>
+                </span>
 
                 <div>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
                     Email
                   </p>
-                  <p className="mt-1 text-white">
+
+                  <p className="mt-1 text-sm text-slate-300 transition-colors group-hover:text-cyan-400">
                     info@solunistresearch.com
                   </p>
                 </div>
-              </div>
+              </a>
 
-              <div className="flex gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10">
+              {/* Phone */}
+              <a
+                href="tel:+10000000000"
+                className="group flex items-center gap-4"
+              >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5">
                   <Phone
-                    size={19}
+                    size={18}
                     className="text-cyan-400"
                   />
-                </div>
+                </span>
 
                 <div>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
                     Phone
                   </p>
-                  <p className="mt-1 text-white">
+
+                  <p className="mt-1 text-sm text-slate-300 transition-colors group-hover:text-cyan-400">
                     +1 000 000 0000
                   </p>
                 </div>
-              </div>
+              </a>
 
-              <div className="flex gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10">
+              {/* Location */}
+              <div className="flex items-center gap-4">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5">
                   <MapPin
-                    size={19}
+                    size={18}
                     className="text-cyan-400"
                   />
-                </div>
+                </span>
 
                 <div>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
                     Location
                   </p>
-                  <p className="mt-1 text-white">
+
+                  <p className="mt-1 text-sm text-slate-300">
                     Pune, Maharashtra, India
                   </p>
                 </div>
               </div>
             </div>
+
+            {/* Response note */}
+            <div className="mt-10 rounded-2xl border border-cyan-400/10 bg-cyan-400/5 p-5">
+              <p className="text-sm leading-6 text-slate-400">
+                <span className="font-semibold text-cyan-400">
+                  What happens next?
+                </span>
+                <br />
+                Submit your enquiry and our team will
+                review your requirements and contact
+                you using the details provided.
+              </p>
+            </div>
           </motion.div>
 
-          {/* Form */}
+          {/* Contact Form */}
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm sm:p-8"
+            initial={{
+              opacity: 0,
+              x: 30,
+            }}
+            whileInView={{
+              opacity: 1,
+              x: 0,
+            }}
+            viewport={{
+              once: true,
+              amount: 0.2,
+            }}
+            transition={{
+              duration: 0.7,
+              delay: 0.1,
+            }}
+            className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 shadow-2xl sm:p-8"
           >
             {submitted ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex min-h-[400px] flex-col items-center justify-center text-center"
-              >
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-cyan-500/10">
+              <div className="flex min-h-[500px] flex-col items-center justify-center text-center">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-cyan-400/10">
                   <CheckCircle2
-                    size={32}
+                    size={34}
                     className="text-cyan-400"
                   />
                 </div>
 
-                <h3 className="mt-6 text-2xl font-bold text-white">
-                  Thank You
+                <h3 className="mt-6 text-2xl font-semibold text-white">
+                  Message Sent Successfully
                 </h3>
 
-                <p className="mt-3 max-w-md text-slate-400">
-                  Your message has been received. Our team will
-                  get back to you shortly.
+                <p className="mt-3 max-w-md leading-7 text-slate-400">
+                  Thank you for contacting Solunist
+                  Research. Your enquiry has been sent
+                  to our team. We&apos;ll get back to you
+                  soon.
                 </p>
 
                 <button
+                  type="button"
                   onClick={() => setSubmitted(false)}
-                  className="mt-7 rounded-full border border-white/10 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-white/10"
+                  className="mt-8 rounded-xl border border-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:border-cyan-400/40 hover:text-cyan-400"
                 >
-                  Send another message
+                  Send Another Message
                 </button>
-              </motion.div>
+              </div>
             ) : (
               <form
                 onSubmit={handleSubmit}
                 noValidate
                 className="space-y-6"
               >
-                <div className="grid gap-6 sm:grid-cols-2">
+                {/* Name */}
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="text-sm font-medium text-white"
+                  >
+                    Name *
+                  </label>
 
-                  {/* Name */}
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="text-sm font-medium text-white"
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    autoComplete="name"
+                    value={formData.name}
+                    onChange={(event) =>
+                      handleChange(
+                        "name",
+                        event.target.value
+                      )
+                    }
+                    aria-invalid={!!errors.name}
+                    aria-describedby={
+                      errors.name
+                        ? "name-error"
+                        : undefined
+                    }
+                    className={`mt-2 w-full rounded-xl border bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-400 ${
+                      errors.name
+                        ? "border-red-400"
+                        : "border-white/10"
+                    }`}
+                    placeholder="Your full name"
+                  />
+
+                  {errors.name && (
+                    <p
+                      id="name-error"
+                      className="mt-2 text-sm text-red-400"
                     >
-                      Name *
-                    </label>
+                      {errors.name}
+                    </p>
+                  )}
+                </div>
 
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      autoComplete="name"
-                      value={formData.name}
-                      onChange={(event) =>
-                        handleChange(
-                          "name",
-                          event.target.value
-                        )
-                      }
-                      aria-invalid={!!errors.name}
-                      aria-describedby={
-                        errors.name
-                          ? "name-error"
-                          : undefined
-                      }
-                      className={`mt-2 w-full rounded-xl border bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-400 ${
-                        errors.name
-                          ? "border-red-400"
-                          : "border-white/10"
-                      }`}
-                      placeholder="Your name"
-                    />
+                {/* Email */}
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="text-sm font-medium text-white"
+                  >
+                    Email *
+                  </label>
 
-                    {errors.name && (
-                      <p
-                        id="name-error"
-                        className="mt-2 text-sm text-red-400"
-                      >
-                        {errors.name}
-                      </p>
-                    )}
-                  </div>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    value={formData.email}
+                    onChange={(event) =>
+                      handleChange(
+                        "email",
+                        event.target.value
+                      )
+                    }
+                    aria-invalid={!!errors.email}
+                    aria-describedby={
+                      errors.email
+                        ? "email-error"
+                        : undefined
+                    }
+                    className={`mt-2 w-full rounded-xl border bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-400 ${
+                      errors.email
+                        ? "border-red-400"
+                        : "border-white/10"
+                    }`}
+                    placeholder="you@company.com"
+                  />
 
-                  {/* Email */}
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="text-sm font-medium text-white"
+                  {errors.email && (
+                    <p
+                      id="email-error"
+                      className="mt-2 text-sm text-red-400"
                     >
-                      Email *
-                    </label>
-
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      value={formData.email}
-                      onChange={(event) =>
-                        handleChange(
-                          "email",
-                          event.target.value
-                        )
-                      }
-                      aria-invalid={!!errors.email}
-                      aria-describedby={
-                        errors.email
-                          ? "email-error"
-                          : undefined
-                      }
-                      className={`mt-2 w-full rounded-xl border bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-400 ${
-                        errors.email
-                          ? "border-red-400"
-                          : "border-white/10"
-                      }`}
-                      placeholder="you@company.com"
-                    />
-
-                    {errors.email && (
-                      <p
-                        id="email-error"
-                        className="mt-2 text-sm text-red-400"
-                      >
-                        {errors.email}
-                      </p>
-                    )}
-                  </div>
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
 
                 {/* Phone */}
                 <div>
                   <label
-                    className="text-sm font-medium text-white"
                     htmlFor="phone"
+                    className="text-sm font-medium text-white"
                   >
-                  Phone *
+                    Phone *
                   </label>
 
                   <input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      autoComplete="tel"
-                      value={formData.phone}
-                      onChange={(event) =>
-                        handleChange("phone", event.target.value)
-                      }
-                      aria-invalid={!!errors.phone}
-                      aria-describedby={
-                        errors.phone ? "phone-error" : undefined
-                      }
-                      className={`mt-2 w-full rounded-xl border bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-400 ${
-                        errors.phone
-                          ? "border-red-400"
-                          : "border-white/10"
-                      }`}
-                      placeholder="+91 98765 43210"
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    autoComplete="tel"
+                    value={formData.phone}
+                    onChange={(event) =>
+                      handleChange(
+                        "phone",
+                        event.target.value
+                      )
+                    }
+                    aria-invalid={!!errors.phone}
+                    aria-describedby={
+                      errors.phone
+                        ? "phone-error"
+                        : undefined
+                    }
+                    className={`mt-2 w-full rounded-xl border bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-400 ${
+                      errors.phone
+                        ? "border-red-400"
+                        : "border-white/10"
+                    }`}
+                    placeholder="+91 98765 43210"
                   />
 
-                      {errors.phone && (
-                        <p
-                          id="phone-error"
-                          className="mt-2 text-sm text-red-400"
-                        >
-                          {errors.phone}
-                        </p>
-                      )}
-                      </div>
+                  {errors.phone && (
+                    <p
+                      id="phone-error"
+                      className="mt-2 text-sm text-red-400"
+                    >
+                      {errors.phone}
+                    </p>
+                  )}
+                </div>
 
                 {/* Company */}
                 <div>
@@ -438,6 +518,9 @@ export default function Contact() {
                     className="text-sm font-medium text-white"
                   >
                     Company
+                    <span className="ml-1 text-slate-500">
+                      (Optional)
+                    </span>
                   </label>
 
                   <input
@@ -453,7 +536,7 @@ export default function Contact() {
                       )
                     }
                     className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-400"
-                    placeholder="Company name"
+                    placeholder="Company / Organization"
                   />
                 </div>
 
@@ -463,13 +546,13 @@ export default function Contact() {
                     htmlFor="message"
                     className="text-sm font-medium text-white"
                   >
-                    Project Details *
+                    Message *
                   </label>
 
                   <textarea
                     id="message"
                     name="message"
-                    rows={5}
+                    rows={6}
                     value={formData.message}
                     onChange={(event) =>
                       handleChange(
@@ -488,7 +571,7 @@ export default function Contact() {
                         ? "border-red-400"
                         : "border-white/10"
                     }`}
-                    placeholder="Tell us about your research requirements..."
+                    placeholder="Tell us about your project or requirements..."
                   />
 
                   {errors.message && (
@@ -501,27 +584,35 @@ export default function Contact() {
                   )}
                 </div>
 
-                {/* Submit */}
+                {/* Submit Error */}
                 {submitError && (
-                    <p className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-300">
-                      {submitError}
-                    </p>
+                  <div className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm leading-6 text-red-300">
+                    {submitError}
+                  </div>
                 )}
+
+                {/* Submit Button */}
                 <motion.button
-                  whileHover={{ scale: sending ? 1 : 1.02 }}
-                  whileTap={{ scale: sending ? 1 : 0.98 }}
+                  whileHover={{
+                    scale: sending ? 1 : 1.02,
+                  }}
+                  whileTap={{
+                    scale: sending ? 1 : 0.98,
+                  }}
                   type="submit"
                   disabled={sending}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-500 px-6 py-3.5 font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                    {sending ? "Sending..." : "Send Message"}
+                  {sending
+                    ? "Sending..."
+                    : "Send Message"}
 
-                    {!sending && <Send size={17} />}
+                  {!sending && <Send size={17} />}
                 </motion.button>
 
-                <p className="text-center text-xs text-slate-500">
-                  We respect your privacy and will only use your
-                  information to respond to your enquiry.
+                <p className="text-center text-xs leading-5 text-slate-600">
+                  By submitting this form, you agree
+                  to be contacted regarding your enquiry.
                 </p>
               </form>
             )}
