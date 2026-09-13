@@ -10,7 +10,7 @@ const stats = [
     label: "Years of Expertise",
   },
   {
-    number: 250,
+    number: 20,
     suffix: "+",
     label: "Research Projects",
   },

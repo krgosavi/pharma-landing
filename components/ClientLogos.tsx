@@ -8,7 +8,6 @@ const logos = [
   "Pharma & Biotech Institutions",
   "SaMD Developers",
   "CROs",
-  "LABCORE",
 ];
 
 export default function ClientLogos() {

@@ -263,30 +263,7 @@ export default function Contact() {
                   </p>
                 </div>
               </a>
-
-              {/* Phone */}
-              <a
-                href="tel:+10000000000"
-                className="group flex items-center gap-4"
-              >
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5">
-                  <Phone
-                    size={18}
-                    className="text-cyan-400"
-                  />
-                </span>
-
-                <div>
-                  <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-                    Phone
-                  </p>
-
-                  <p className="mt-1 text-sm text-slate-300 transition-colors group-hover:text-cyan-400">
-                    +1 000 000 0000
-                  </p>
-                </div>
-              </a>
-
+              
               {/* Location */}
               <div className="flex items-center gap-4">
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5">

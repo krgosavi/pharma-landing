@@ -162,7 +162,7 @@ export default function Services() {
             Comprehensive
             <span className="text-cyan-500">
               {" "}
-              Pharmaceutical Solutions
+              Pharmaceutical And MedTech Solutions
             </span>
           </h2>
 
