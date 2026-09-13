@@ -15,9 +15,9 @@ const stats = [
     label: "Research Projects",
   },
   {
-    number: 40,
+    number: 20,
     suffix: "+",
-    label: "Global Clients",
+    label: "Clients",
   },
   {
     number: 98,

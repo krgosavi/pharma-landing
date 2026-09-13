@@ -12,7 +12,6 @@ const companyLinks = [
   { label: "About Us", href: "#about" },
   { label: "Our Process", href: "#process" },
   { label: "Careers", href: "#" },
-  { label: "Contact", href: "#contact" },
 ];
 
 const serviceLinks = [
@@ -176,16 +175,6 @@ export default function Footer() {
                 href="tel:+10000000000"
                 className="group flex items-center gap-3 text-sm text-slate-400 transition-colors hover:text-cyan-400"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03]">
-                  <Phone
-                    size={16}
-                    className="text-cyan-400"
-                  />
-                </span>
-
-                <span>
-                  +1 000 000 0000
-                </span>
               </a>
 
               <div className="flex items-center gap-3 text-sm text-slate-400">
