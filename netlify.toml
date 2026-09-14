@@ -1,0 +1,6 @@
+[build.environment]
+  # Next.js/Turbopack cache files can capture env var values for incremental
+  # build cache invalidation. RESEND_API_KEY is only ever read server-side
+  # (see app/api/contact/route.ts) and is never shipped to the client, so
+  # its presence in the build cache is a false positive for secrets scanning.
+  SECRETS_SCAN_OMIT_PATHS = ".netlify/.next/cache"
